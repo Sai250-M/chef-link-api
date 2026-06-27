@@ -11,9 +11,24 @@ const app: Express = express();
 
 // ── Security ─────────────────────────────────────────────────
 app.use(helmet());
+const allowedOrigins = [
+  "https://chef-link-ui.vercel.app",
+  "http://localhost:5173",
+  ...(process.env.CLIENT_URL ? [process.env.CLIENT_URL] : []),
+];
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:5173",
+  origin: (origin, callback) => {
+    // Allow server-to-server requests (no Origin header) and listed origins
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS: origin '${origin}' not allowed`));
+    }
+  },
   credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 }));
 
 // ── Body Parsing ─────────────────────────────────────────────
