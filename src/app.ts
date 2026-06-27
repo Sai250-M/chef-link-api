@@ -14,14 +14,14 @@ app.use(helmet());
 const allowedOrigins = [
   "https://chef-link-ui.vercel.app",
   "http://localhost:5173",
+  ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
   ...(process.env.CLIENT_URL ? [process.env.CLIENT_URL] : []),
 ];
 
-app.use(cors({
+const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {
-    // Allow server-to-server requests (no Origin header) and listed origins
     if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
+      callback(null, origin ?? true);
     } else {
       callback(new Error(`CORS: origin '${origin}' not allowed`));
     }
@@ -29,7 +29,11 @@ app.use(cors({
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-}));
+};
+
+// Explicit preflight handler must come before route registration
+app.options("*", cors(corsOptions));
+app.use(cors(corsOptions));
 
 // ── Body Parsing ─────────────────────────────────────────────
 app.use(express.json({ limit: "10mb" }));
