@@ -32,7 +32,7 @@ const corsOptions: cors.CorsOptions = {
 };
 
 // Explicit preflight handler must come before route registration
-app.options("/api/v1/*", cors(corsOptions));
+app.use(cors(corsOptions));
 app.use(cors(corsOptions));
 
 // ── Body Parsing ─────────────────────────────────────────────
