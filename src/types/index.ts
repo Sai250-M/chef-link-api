@@ -158,6 +158,98 @@ export interface Application {
   updated_at: Date;
 }
 
+// ── Events ───────────────────────────────────────────────────
+export type EventStatus   = "DRAFT" | "OPEN" | "CLOSED" | "CANCELLED";
+export type BookingStatus = "PENDING" | "CONFIRMED" | "CANCELLED" | "ATTENDED";
+export type PaymentStatus = "PENDING" | "PAID" | "REFUNDED" | "FAILED";
+
+export interface Event {
+  id: string;
+  restaurant_id: string;
+  title: string;
+  description: string | null;
+  event_type: string | null;
+  event_date: string;
+  start_time: string;
+  end_time: string;
+  venue: string;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  country: string;
+  max_participants: number;
+  current_participants: number;
+  price: number;
+  currency: string;
+  banner_url: string | null;
+  status: EventStatus;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface EventBooking {
+  id: string;
+  event_id: string;
+  user_id: string;
+  booking_status: BookingStatus;
+  number_of_people: number;
+  booking_date: Date;
+  special_request: string | null;
+  payment_status: PaymentStatus;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface EventGalleryImage {
+  id: string;
+  event_id: string;
+  image_url: string;
+  created_at: Date;
+}
+
+// ── Guest Event Booking ───────────────────────────────────────
+export type GuestBookingType        = "CHEF" | "HELPER";
+export type GuestEventType          =
+  | "BIRTHDAY" | "WEDDING" | "HOUSEWARMING" | "ANNIVERSARY"
+  | "BABY_SHOWER" | "CORPORATE_EVENT" | "PRIVATE_PARTY"
+  | "LIVE_COOKING" | "FESTIVAL" | "OTHER";
+export type BookingRequestStatus    = "PENDING" | "ACCEPTED" | "REJECTED" | "COMPLETED" | "CANCELLED";
+
+export interface BookingRequest {
+  id:                   string;
+  chef_id:              string | null;
+  helper_id:            string | null;
+  booking_type:         GuestBookingType;
+  guest_name:           string;
+  guest_email:          string;
+  guest_phone:          string;
+  event_type:           GuestEventType;
+  event_date:           string;
+  start_time:           string;
+  end_time:             string;
+  guest_count:          number;
+  budget:               number;
+  currency:             string;
+  location:             string | null;
+  address:              string | null;
+  city:                 string | null;
+  state:                string | null;
+  country:              string;
+  special_requirements: string | null;
+  status:               BookingRequestStatus;
+  created_at:           Date;
+  updated_at:           Date;
+}
+
+export interface BookingAnalytics {
+  bookings_per_month:  Array<{ month: string; count: number }>;
+  bookings_by_event:   Array<{ event_type: string; count: number }>;
+  bookings_by_city:    Array<{ city: string; count: number }>;
+  most_booked_chefs:   Array<{ id: string; first_name: string; last_name: string; booking_count: number }>;
+  most_booked_helpers: Array<{ id: string; first_name: string; last_name: string; booking_count: number }>;
+  status_summary:      Array<{ status: string; count: number }>;
+}
+
 // ── Pagination ───────────────────────────────────────────────
 export interface PaginationMeta {
   page: number;
